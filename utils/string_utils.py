@@ -26,8 +26,8 @@ def merge_emails_like_on_homepage(contact):
                                    [contact.email, contact.email2, contact.email3])))
 
 
-def random_string(prefix, maxlen):
-    symbols = string.ascii_letters + string.digits + string.punctuation + " " * 10
+def random_string(prefix, maxlen, symbols=None):
+    symbols = string.ascii_letters + string.digits + string.punctuation + " " * 10 if symbols is None else symbols
     return prefix + "".join([random.choice(symbols) for i in range(random.randrange(maxlen))])
 
 
@@ -60,8 +60,8 @@ def random_site(maxlen):
 def random_email(maxlen):
     domain = random.choice(["com", "ru", "net", "edu"])
     symbols = string.ascii_letters + string.digits
-    prefix = "".join([random.choice(symbols) for i in range(random.randrange(maxlen//2))])
-    name = "".join([random.choice(symbols) for i in range(random.randrange(maxlen//2))])
+    prefix = "".join([random.choice(symbols) for i in range(random.randrange(maxlen // 2))])
+    name = "".join([random.choice(symbols) for i in range(random.randrange(maxlen // 2))])
     result = f"{prefix}@{name}.{domain}"
     len_res = len(result)
     if len_res > maxlen:

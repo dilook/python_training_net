@@ -1,3 +1,5 @@
+import re
+
 from model.project import Project
 
 
@@ -14,8 +16,11 @@ class ProjectHelper:
         for row in rows:
             cells = row.find_elements_by_tag_name("td")
             name = cells[0].text
+            id_text = cells[0].find_element_by_tag_name("a").get_attribute("href")
+            match = re.match(".*project_id=(.*)", id_text)
+            id = match.group(1)
             desc = cells[4].text
-            projects_list.append(Project(name=name, description=desc))
+            projects_list.append(Project(id=id, name=name, description=desc))
         return list(projects_list)
 
     def add_project(self, project):
