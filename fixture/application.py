@@ -3,6 +3,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 from webdriver_manager.firefox import GeckoDriverManager
 from webdriver_manager.microsoft import IEDriverManager, EdgeChromiumDriverManager
 
+from fixture.project import ProjectHelper
 from fixture.session import SessionHelper
 
 
@@ -19,7 +20,9 @@ class Application:
         else:
             raise ValueError("Unrecognized browser %s" % browser)
         self.wd.implicitly_wait(2)
+        self.wd.maximize_window()
         self.base_url = base_url
+        self.project = ProjectHelper(self)
         self.session = SessionHelper(self)
 
     def open_home_page(self):

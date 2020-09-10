@@ -22,7 +22,7 @@ class SessionHelper:
 
     def ensure_login(self, username, password):
         if self.is_logged_in():
-            if self.is_logged_in_as_username(username):
+            if self.is_logged_in_as(username):
                 return
             else:
                 self.logout()

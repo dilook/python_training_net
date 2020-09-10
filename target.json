@@ -4,6 +4,6 @@
   },
   "webadmin": {
     "username": "administrator",
-    "password": "root"
+    "password": "secret"
   }
 }
