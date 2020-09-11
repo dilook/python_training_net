@@ -16,12 +16,17 @@ class ProjectHelper:
         for row in rows:
             cells = row.find_elements_by_tag_name("td")
             name = cells[0].text
+            desc = cells[4].text
             id_text = cells[0].find_element_by_tag_name("a").get_attribute("href")
             match = re.match(".*project_id=(.*)", id_text)
             id = match.group(1)
-            desc = cells[4].text
             projects_list.append(Project(id=id, name=name, description=desc))
         return list(projects_list)
+
+    def open_projects_page(self):
+        wd = self.app.wd
+        if not wd.current_url.endswith("manage_proj_page.php"):
+            wd.get(self.app.base_url + "/manage_proj_page.php")
 
     def add_project(self, project):
         wd = self.app.wd
@@ -32,7 +37,13 @@ class ProjectHelper:
         wd.find_element_by_id("project-description").send_keys(project.description)
         wd.find_element_by_css_selector("input[value='Добавить проект']").click()
 
-    def open_projects_page(self):
+    def delete_project(self, project):
         wd = self.app.wd
-        if not wd.current_url.endswith("manage_proj_page.php"):
-            wd.get(self.app.base_url + "/manage_proj_page.php")
+        self.open_projects_page()
+        self.edit_project(project)
+        wd.find_element_by_css_selector("input[value='Удалить проект']").click()
+        wd.find_element_by_css_selector(".alert input[value='Удалить проект']").click()
+
+    def edit_project(self, project):
+        wd = self.app.wd
+        wd.find_element_by_link_text(project.name).click()
