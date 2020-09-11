@@ -5,10 +5,11 @@ from webdriver_manager.microsoft import IEDriverManager, EdgeChromiumDriverManag
 
 from fixture.project import ProjectHelper
 from fixture.session import SessionHelper
+from fixture.soap import SoapHelper
 
 
 class Application:
-    def __init__(self, browser, base_url):
+    def __init__(self, browser, config):
         if browser == "firefox":
             self.wd = webdriver.Firefox(executable_path=GeckoDriverManager().install())
         elif browser == "chrome":
@@ -21,8 +22,10 @@ class Application:
             raise ValueError("Unrecognized browser %s" % browser)
         self.wd.implicitly_wait(2)
         self.wd.maximize_window()
-        self.base_url = base_url
+        self.base_url = config["web"]["base_url"]
+        self.config = config
         self.project = ProjectHelper(self)
+        self.soap = SoapHelper(self)
         self.session = SessionHelper(self)
 
     def open_home_page(self):
