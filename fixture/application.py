@@ -3,6 +3,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 from webdriver_manager.firefox import GeckoDriverManager
 from webdriver_manager.microsoft import IEDriverManager, EdgeChromiumDriverManager
 
+from fixture.james import JamesHelper
 from fixture.project import ProjectHelper
 from fixture.session import SessionHelper
 from fixture.soap import SoapHelper
@@ -27,6 +28,7 @@ class Application:
         self.project = ProjectHelper(self)
         self.soap = SoapHelper(self)
         self.session = SessionHelper(self)
+        self.session = JamesHelper(self)
 
     def open_home_page(self):
         wd = self.wd
