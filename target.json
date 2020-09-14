@@ -5,5 +5,18 @@
   "webadmin": {
     "username": "administrator",
     "password": "secret"
+  },
+  "ftp": {
+    "host": "localhost",
+    "username": "admin",
+    "password": "secret",
+    "config_inc": {
+      "g_db_password": "123",
+      "g_crypto_master_salt": "321"
+    }
+  },
+  "mail": {
+    "host": "localhost",
+    "port": ""
   }
 }
