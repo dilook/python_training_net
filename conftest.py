@@ -1,6 +1,9 @@
 import json
 import os
+import tempfile
 
+import ftputil
+import jinja2
 import pytest
 
 from fixture.application import Application
@@ -30,8 +33,53 @@ def app(request, config):
     web_admin = config["webadmin"]
     if fixture is None or not fixture.is_valid():
         fixture = Application(browser=browser, config=config)
-    fixture.session.ensure_login(username=web_admin["username"], password=web_admin["password"])
+    # fixture.session.ensure_login(username=web_admin["username"], password=web_admin["password"])
     return fixture
+
+
+def install_server_configuration(host, username, password, file):
+    with ftputil.FTPHost(host, username, password) as remote:
+        if remote.path.isfile("config/config_inc.php.bak"):
+            remote.remove("config/config_inc.php.bak")
+        if remote.path.isfile("config/config_inc.php"):
+            remote.rename("config/config_inc.php", "config/config_inc.php.bak")
+        remote.upload(file.name, "config/config_inc.php")
+
+
+def restore_server_configuration(host, username, password):
+    with ftputil.FTPHost(host, username, password) as remote:
+        if remote.path.isfile("config/config_inc.php.bak"):
+            if remote.path.isfile("config/config_inc.php"):
+                remote.remove("config/config_inc.php")
+            remote.rename("config/config_inc.php.bak", "config/config_inc.php")
+
+
+@pytest.fixture(scope="session", autouse=True)
+def configure_server(request, config):
+    ftp_config = config["ftp"]
+
+    config_file = get_mantis_config_file(config)
+    install_server_configuration(ftp_config["host"], ftp_config["username"], ftp_config["password"], config_file)
+
+    def fin():
+        restore_server_configuration(ftp_config["host"], ftp_config["username"], ftp_config["password"])
+
+    request.addfinalizer(fin)
+
+
+def get_mantis_config_file(config):
+    ftp_config = config["ftp"]["config_inc"]
+    with tempfile.NamedTemporaryFile(delete=False) as tf:
+        template_file = os.path.join(os.path.dirname(__file__), "resources", "config_inc.php")
+        with open(template_file) as template_file:
+            template = jinja2.Template(template_file.read())
+        bind = {"g_db_password": ftp_config["g_db_password"],
+                "g_crypto_master_salt": ftp_config["g_crypto_master_salt"],
+                "smtp_port": config["mail"]["port"]
+                }
+        out = template.render(bind)
+        tf.write(out.encode())
+    return tf
 
 
 @pytest.fixture(scope="session", autouse=True)

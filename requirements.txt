@@ -1,5 +1,7 @@
 configparser==5.0.0
-pytest==6.0.1
+pytest==6.0.2
 selenium==3.141.0
 webdriver-manager==3.2.2
 suds-py3== 1.4.1.0
+ftputil==4.0.0
+Jinja2==2.11.2
